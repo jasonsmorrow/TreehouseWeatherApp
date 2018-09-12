@@ -15,22 +15,53 @@ function toCels(temp){
   return cTemp.toFixed(1).toString();
 }
 
+function printError(error) {
+  console.error(error.message);
+}
+
 function get(query) {
-  const request =
-  http.get(`http://api.openweathermap.org/data/2.5/weather?${query}&APPID=${KEY}`, response => {
+  let qType = '';
+  try {
+    if (parseInt(query[0]) >= 0 || parseInt(query[0]) <= 9){ // This assumes any number is a zip
+      qType = `zip=${query}`;
+    }
+    else{ // this just assumes any non number is a city
+      qType = `q=${query}`;
+    }
+  }
+  catch (error){
+    printError(error);
+  }
 
-    let currentWeather = ''
+  try {
+    const request =
+    http.get(`http://api.openweathermap.org/data/2.5/weather?${qType}&APPID=${KEY}`, response => {
+      if (response.statusCode === 200){
+        let currentWeather = ''
 
-    response.on('data', data => {
-      currentWeather += data.toString();
+        response.on('data', data => {
+          currentWeather += data.toString();
+        });
+
+        response.on('end', () => {
+          const weather = JSON.parse(currentWeather);
+          let message = `Current weather in ${weather.name} is ${toFaren(weather.main.temp)}F (${toCels(weather.main.temp)}C) with ${weather.weather[0].description}.`
+          console.log(message);
+        });
+      }
+      else {
+        const message = `There was an error getting weather data for ${query} (${http.STATUS_CODES[response.statuseCode]})`;
+        const statusCodeError = new Error(message);
+        printError(statusCodeError);
+      }
+
     });
 
-    response.on('end', () => {
-      const weather = JSON.parse(currentWeather);
-      let message = `Current weather in ${weather.name} is ${toFaren(weather.main.temp)}F (${toCels(weather.main.temp)}C) with ${weather.weather[0].description}.`
-      console.log(message);
-    });
-  });
+    request.on('error', response => console.error(`There was a problem: ${response}`));
+  }
+  catch (error) {
+    printError(error);
+  }
 }
 
 module.exports.get = get;
