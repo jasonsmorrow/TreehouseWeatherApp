@@ -1,20 +1,9 @@
-// Define constants: api key
-// The API key is in a separate file so I can share this to my GitHub without giving everyone my key
-apikey = require('./apikey')
-const KEY = apikey.APIKEY;
-// Require http to access Open Weather Map
-http = require('http');
+// require weather app
+const weather = require('./weather');
 
-http.get(`http://api.openweathermap.org/data/2.5/weather?zip=98662,us&APPID=${KEY}`, response => {
+// get args
+query = process.argv.slice(2);
 
-  let currentWeather = ''
-
-  response.on('data', data => {
-    currentWeather += data.toString();
-  });
-
-  response.on('end', () => {
-    const weather = JSON.parse(currentWeather);
-    console.log(weather);
-  });
-});
+// pass all args into get function.  I have it send the generic query, so it has to be via
+// the API.  I will futz with it to make it determine if is is a valid query later.
+query.forEach(weather.get)
