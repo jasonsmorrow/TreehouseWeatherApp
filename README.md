@@ -14,4 +14,12 @@ module.exports.APIKEY = APIKEY;
 
 That link will lead to the page to subscribe for your own api.  I would share mine, but they be expensive, yo!
 
-After the first commit, I will be working on creating the app myself.  Since this assignment did not give a full rubric on what the final product will look like, I can't guarantee my solution will match the teachers.
+After the first commit, I will be working on creating the app myself.  Since this assignment did not give a
+full rubric on what the final product will look like, I can't guarantee my solution will match the teachers.
+
+To use, on a command line run:
+
+node app.js <args>
+
+Where args are any number of zip codes or cities separated by spaces.  I can't guarantee that the city will
+be the right one (state or country) since that fell beyond the scope of this project.
